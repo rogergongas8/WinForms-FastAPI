@@ -1,5 +1,4 @@
 from typing import List
-
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -24,7 +23,7 @@ class Producto(BaseModel):
 
 class Venta(BaseModel):
     id: int = None
-    producto_id: int # Corregido: Usamos producto_id para claridad
+    producto_id: int
     kilos_vendidos: float
     total_venta: float = None
 
