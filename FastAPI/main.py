@@ -28,6 +28,7 @@ class Venta(BaseModel):
     total_venta: float = None
 
 
+# Datos iniciales de prueba
 db["productos"].extend([
     Producto(id=1, nombre="Manzana Fuji", categoria="Fruta", preciokg=2.50, stockkg=100.0),
     Producto(id=2, nombre="Pera Conferencia", categoria="Fruta", preciokg=1.80, stockkg=50.0)
@@ -77,7 +78,6 @@ def eliminar_producto(id: int):
     return {"ok": True}
 
 
-
 # Metodo POST para una venta
 @app.post("/ventas", response_model=Venta)
 def registrar_venta(venta_data: Venta):
@@ -115,12 +115,13 @@ def registrar_venta(venta_data: Venta):
     )
     next_venta_id += 1
 
+    # 5. Actualizar stock
     producto_encontrado.stockkg = round(producto_encontrado.stockkg - venta_data.kilos_vendidos, 2)
 
     # 6. Guardar la venta
     db["ventas"].append(nueva_venta)
 
-    return nueva_venta()
+    return nueva_venta
 
 @app.get("/ventas", response_model=List[Venta])
 def listar_ventas():
