@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rogergongas\\Desktop\\WinForms\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
+      "projectUniqueName": "C:\\Users\\rogergongas\\Desktop\\SuperMarket - FastAPI\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
       "projectName": "SuperMarketClient",
-      "projectPath": "C:\\Users\\rogergongas\\Desktop\\WinForms\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
+      "projectPath": "C:\\Users\\rogergongas\\Desktop\\SuperMarket - FastAPI\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
       "packagesPath": "C:\\Users\\rogergongas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rogergongas\\Desktop\\WinForms\\SuperMarketClient\\SuperMarketClient\\obj\\",
+      "outputPath": "C:\\Users\\rogergongas\\Desktop\\SuperMarket - FastAPI\\SuperMarketClient\\SuperMarketClient\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

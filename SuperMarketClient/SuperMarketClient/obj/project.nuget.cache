@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "z6G5MXdps7M=",
+  "dgSpecHash": "tH9Z0wcZMiw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\rogergongas\\Desktop\\WinForms\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
+  "projectFilePath": "C:\\Users\\rogergongas\\Desktop\\SuperMarket - FastAPI\\SuperMarketClient\\SuperMarketClient\\SuperMarketClient.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
