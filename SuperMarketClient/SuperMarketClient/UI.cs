@@ -5,11 +5,15 @@ namespace SuperMarketClient
 {
     public static class UI
     {
-        public static Color PrimaryColor = Color.FromArgb(45, 52, 71);
-        public static Color AccentColor = Color.FromArgb(0, 122, 204); 
-        public static Color BackColor = Color.WhiteSmoke;       
-        public static Color LightText = Color.White;
         
+        public static Color PrimaryColor = Color.FromArgb(56, 142, 60); 
+        
+        public static Color AccentColor = Color.FromArgb(255, 112, 67);
+        
+        public static Color BackColor = Color.FromArgb(250, 248, 245);
+        
+        public static Color TextColor = Color.FromArgb(60, 60, 60);
+
         public static Font MainFont = new Font("Segoe UI", 10F, FontStyle.Regular);
         public static Font HeaderFont = new Font("Segoe UI", 11F, FontStyle.Bold);
 
@@ -17,14 +21,15 @@ namespace SuperMarketClient
         {
             return new Button
             {
-                Text = texto,
+                Text = texto.ToUpper(), 
                 Location = new Point(x, y),
-                Size = new Size(100, 35),
+                Size = new Size(110, 35),
                 BackColor = colorFondo,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                Cursor = Cursors.Hand 
+                Cursor = Cursors.Hand,
+                FlatAppearance = { BorderSize = 0 } 
             };
         }
 
@@ -33,17 +38,18 @@ namespace SuperMarketClient
             dgv.BackgroundColor = Color.White;
             dgv.BorderStyle = BorderStyle.None;
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(230, 240, 255);
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(200, 230, 201);
             dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
             dgv.DefaultCellStyle.Font = MainFont;
-            dgv.RowTemplate.Height = 35;
+            dgv.DefaultCellStyle.ForeColor = TextColor;
+            dgv.RowTemplate.Height = 40;
             
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = HeaderFont;
-            dgv.ColumnHeadersHeight = 40;
+            dgv.ColumnHeadersHeight = 45;
         }
     }
 }

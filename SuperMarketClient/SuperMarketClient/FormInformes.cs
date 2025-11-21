@@ -1,6 +1,4 @@
-﻿
-
-namespace SuperMarketClient
+﻿namespace SuperMarketClient
 {
     public class FormInformes : Form
     {
