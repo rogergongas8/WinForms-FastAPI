@@ -1,25 +1,30 @@
+import json
+import os
 from typing import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-# Inicializamos la aplicacion de FastApi
 app = FastAPI()
 
-# Simulacion de almacenamiento de datos
+DB_FILE = "datos.json"
+
 db = {
     "productos": [],
     "ventas": []
 }
 
+# Variables globales para IDs
 next_producto_id = 1
 next_venta_id = 1
 
+
 class Producto(BaseModel):
     id: int = None
-    nombre: str
-    categoria: str
-    preciokg: float
-    stockkg: float
+    NOMBRE: str
+    CATEGORIA: str
+    PRECIOKG: float
+    STOCK: float
+
 
 class Venta(BaseModel):
     id: int = None
@@ -28,85 +33,91 @@ class Venta(BaseModel):
     total_venta: float = None
 
 
-# Datos iniciales de prueba
-db["productos"].extend([
-    Producto(id=1, nombre="Manzana Fuji", categoria="Fruta", preciokg=2.50, stockkg=100.0),
-    Producto(id=2, nombre="Pera Conferencia", categoria="Fruta", preciokg=1.80, stockkg=50.0)
-])
-next_producto_id = 3
+def guardar_datos():
+    data_to_save = {
+        "productos": [p.dict() for p in db["productos"]],
+        "ventas": [v.dict() for v in db["ventas"]],
+        "next_producto_id": next_producto_id,
+        "next_venta_id": next_venta_id
+    }
+    with open(DB_FILE, "w") as f:
+        json.dump(data_to_save, f, indent=4)
 
-# Metodo GET para obtener los productos
+
+def cargar_datos():
+    global next_producto_id, next_venta_id
+    if not os.path.exists(DB_FILE):
+        db["productos"] = [
+            Producto(id=1, NOMBRE="Manzana Fuji", CATEGORIA="Fruta", PRECIOKG=2.50, STOCK=100.0),
+            Producto(id=2, NOMBRE="Pera Conferencia", CATEGORIA="Fruta", PRECIOKG=1.80, STOCK=50.0)
+        ]
+        global next_producto_id
+        next_producto_id = 3
+        guardar_datos()
+        return
+
+    with open(DB_FILE, "r") as f:
+        data = json.load(f)
+        db["productos"] = [Producto(**p) for p in data["productos"]]
+        db["ventas"] = [Venta(**v) for v in data["ventas"]]
+        next_producto_id = data.get("next_producto_id", 1)
+        next_venta_id = data.get("next_venta_id", 1)
+
+
+cargar_datos()
+
+
 @app.get("/productos", response_model=List[Producto])
 def listar_productos():
     return db["productos"]
 
-# Metodo post para crear los productos
+
 @app.post("/productos", response_model=Producto)
 def crear_producto(producto: Producto):
     global next_producto_id
-
     producto.id = next_producto_id
     next_producto_id += 1
-
     db["productos"].append(producto)
+    guardar_datos()
     return producto
 
 
-# Metodo put para actualizar un producto mediante su id
 @app.put("/productos/{id}", response_model=Producto)
 def actualizar_producto(id: int, producto_actualizado: Producto):
-    for i, producto_actual in enumerate(db["productos"]):
-        if producto_actual.id == id:
+    for i, p in enumerate(db["productos"]):
+        if p.id == id:
             producto_actualizado.id = id
             db["productos"][i] = producto_actualizado
+            guardar_datos()
             return producto_actualizado
+    raise HTTPException(status_code=404, detail="Producto no encontrado")
 
-    raise HTTPException(status_code=404, detail=f"Producto con ID {id} no encontrado")
 
-
-# Metodo DELETE para borrar un producto mediante su id
 @app.delete("/productos/{id}")
 def eliminar_producto(id: int):
     global db
-    productos_antes = len(db["productos"])
-
+    antes = len(db["productos"])
     db["productos"] = [p for p in db["productos"] if p.id != id]
-
-    if len(db["productos"]) == productos_antes:
-        raise HTTPException(status_code=404, detail=f"Producto con ID {id} no encontrado")
-
+    if len(db["productos"]) == antes:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    guardar_datos()
     return {"ok": True}
 
 
-# Metodo POST para una venta
 @app.post("/ventas", response_model=Venta)
 def registrar_venta(venta_data: Venta):
     global next_venta_id
 
-    # 1. Búsqueda del producto por ID
-    producto_index = -1
-    producto_encontrado = None
-    for i, p in enumerate(db["productos"]):
-        if p.id == venta_data.producto_id:
-            producto_encontrado = p
-            producto_index = i
-            break
+    # Buscar producto
+    producto = next((p for p in db["productos"] if p.id == venta_data.producto_id), None)
+    if not producto:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
 
-    if producto_index == -1:
-        raise HTTPException(status_code=404, detail=f"Producto con ID {venta_data.producto_id} no encontrado")
+    if producto.STOCK < venta_data.kilos_vendidos:
+        raise HTTPException(status_code=400, detail="Stock insuficiente")
 
-    # 2. Verificar las condiciones y el stock
-    if venta_data.kilos_vendidos <= 0:
-        raise HTTPException(status_code=400, detail="Los kilos vendidos deben ser mayores a cero.")
-
-    if producto_encontrado.stockkg < venta_data.kilos_vendidos:
-        raise HTTPException(status_code=400,
-                            detail=f"Stock insuficiente. Disponible: {producto_encontrado.stockkg} kg.")
-
-    # 3. Calcular total
-    total = venta_data.kilos_vendidos * producto_encontrado.preciokg
-
-    # 4. Crear el objeto Venta completo
+    # Crear venta
+    total = venta_data.kilos_vendidos * producto.PRECIOKG
     nueva_venta = Venta(
         id=next_venta_id,
         producto_id=venta_data.producto_id,
@@ -115,13 +126,13 @@ def registrar_venta(venta_data: Venta):
     )
     next_venta_id += 1
 
-    # 5. Actualizar stock
-    producto_encontrado.stockkg = round(producto_encontrado.stockkg - venta_data.kilos_vendidos, 2)
+    # Actualizar stock
+    producto.STOCK = round(producto.STOCK - venta_data.kilos_vendidos, 2)
 
-    # 6. Guardar la venta
     db["ventas"].append(nueva_venta)
-
+    guardar_datos()
     return nueva_venta
+
 
 @app.get("/ventas", response_model=List[Venta])
 def listar_ventas():
