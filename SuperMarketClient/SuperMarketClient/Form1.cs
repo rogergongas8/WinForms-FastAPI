@@ -22,9 +22,8 @@ namespace SuperMarketClient
             this.Text = "Frutería El Mercado - Gestión";
             this.Size = new Size(900, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = UI.PrimaryColor; // Fondo base si no hay imagen
+            this.BackColor = UI.PrimaryColor;
 
-            // Intento de cargar imagen segura
             string rutaImagen = "fondo.jpg"; 
             if (File.Exists(rutaImagen))
             {
@@ -38,7 +37,6 @@ namespace SuperMarketClient
         
         private void CrearPanelCentral()
         {
-            // Panel blanco flotante con sombra simulada (Padding)
             Panel panelMenu = new Panel
             {
                 Size = new Size(380, 420),
@@ -52,7 +50,6 @@ namespace SuperMarketClient
             );
             panelMenu.Anchor = AnchorStyles.None;
 
-            // Título
             lblTitulo = new Label
             {
                 Text = "MENÚ PRINCIPAL",
@@ -64,16 +61,13 @@ namespace SuperMarketClient
                 Height = 70
             };
 
-            // 1. Añadimos botones (visualmente irán abajo)
             AgregarBotonMenu(panelMenu, "Ver Informes", Color.Purple, () => new FormInformes(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Control de Stock", Color.Orange, () => new FormStock(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Nueva Venta", UI.AccentColor, () => new FormVentas(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Gestionar Productos", UI.PrimaryColor, () => new FormProductos(_apiClient).ShowDialog());
 
-            // 2. Añadimos título
             panelMenu.Controls.Add(lblTitulo);
             
-            // 3. ¡LA CLAVE! Enviar al fondo para que suba arriba en Dock=Top
             lblTitulo.SendToBack(); 
 
             this.Controls.Add(panelMenu);

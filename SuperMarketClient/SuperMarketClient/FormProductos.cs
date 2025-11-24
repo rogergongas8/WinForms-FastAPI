@@ -31,9 +31,7 @@ namespace SuperMarketClient
         {
             this.BackColor = UI.BackColor;
 
-            // Panel Superior Limpio
             Panel panelTop = new Panel { Dock = DockStyle.Top, Height = 80, BackColor = Color.White, Padding = new Padding(20) };
-            
             Label lblBuscar = new Label { Text = "🔍 Buscar:", Location = new Point(20, 32), AutoSize = true, ForeColor = Color.Gray, Font = UI.MainFont };
             txtBuscar = new TextBox { Location = new Point(100, 30), Width = 200, Font = UI.MainFont, BorderStyle = BorderStyle.FixedSingle };
             txtBuscar.TextChanged += (s, e) => FiltrarLista();
@@ -52,7 +50,6 @@ namespace SuperMarketClient
 
             panelTop.Controls.AddRange(new Control[] { lblBuscar, txtBuscar, btnRefrescar, btnNuevo, btnEditar, btnEliminar });
 
-            // Tabla Estilizada
             dgvProductos = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -68,7 +65,7 @@ namespace SuperMarketClient
 
             this.Controls.Add(dgvProductos);
             this.Controls.Add(panelTop);
-            panelTop.SendToBack(); // El panel top va "detrás" del grid en Z-Order para pintarse arriba correctamente si hay Dock Fill
+            panelTop.SendToBack();
         }
         
         private async void CargarDatos()

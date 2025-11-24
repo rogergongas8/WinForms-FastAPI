@@ -32,24 +32,19 @@ namespace SuperMarketClient
 
         public static void EstilarGrid(DataGridView dgv)
         {
-            // Fondo limpio
             dgv.BackgroundColor = Color.White;
             dgv.BorderStyle = BorderStyle.None;
             
-            // Quitar lineas negras
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgv.GridColor = Color.FromArgb(230, 230, 230); // Gris muy clarito para las líneas
+            dgv.GridColor = Color.FromArgb(230, 230, 230);
             
-            // Selección suave
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(220, 237, 200); // Verde muy suave
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(220, 237, 200);
             dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
             
-            // Fuente y espaciado
             dgv.DefaultCellStyle.Font = MainFont;
             dgv.DefaultCellStyle.ForeColor = TextColor;
-            dgv.RowTemplate.Height = 45; // Filas más altas (más aire)
+            dgv.RowTemplate.Height = 45;
             
-            // Cabecera
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
