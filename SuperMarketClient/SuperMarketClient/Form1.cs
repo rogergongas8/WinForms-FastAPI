@@ -54,23 +54,23 @@ namespace SuperMarketClient
                 BackColor = Color.White,
                 Padding = new Padding(20)
             };
-            
-            // Panel central
+    
             panelMenu.Location = new Point(
                 (this.ClientSize.Width - panelMenu.Width) / 2,
                 (this.ClientSize.Height - panelMenu.Height) / 2
             );
             panelMenu.Anchor = AnchorStyles.None; 
 
-
-
-            panelMenu.Controls.Add(lblTitulo);
-
-            // Botones
+            panelMenu.Controls.Add(lblTitulo); 
+            lblTitulo.BringToFront();
+            
+            // 1. PRIMERO AÑADES LOS BOTONES (para que queden abajo)
             AgregarBotonMenu(panelMenu, "Ver Informes", Color.Purple, () => new FormInformes(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Control de Stock", Color.Orange, () => new FormStock(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Nueva Venta", UI.AccentColor, () => new FormVentas(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Gestionar Productos", UI.PrimaryColor, () => new FormProductos(_apiClient).ShowDialog());
+            
+ 
 
             this.Controls.Add(panelMenu);
         }
