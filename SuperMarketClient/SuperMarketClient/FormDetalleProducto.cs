@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace SuperMarketClient
 {
@@ -6,12 +9,9 @@ namespace SuperMarketClient
     {
         private readonly ApiClient _apiClient;
         private readonly Producto _producto;
-        private TextBox txtNombre;
-        private TextBox txtCategoria;
-        private NumericUpDown numPrecio;
-        private NumericUpDown numStock;
+        private TextBox txtNombre, txtCategoria;
+        private NumericUpDown numPrecio, numStock;
         private Button btnGuardar;
-        private Button btnCancelar;
 
         public FormDetalleProducto(ApiClient apiClient, Producto producto = null)
         {
@@ -19,10 +19,11 @@ namespace SuperMarketClient
             _producto = producto;
 
             this.Text = _producto == null ? "Nuevo Producto" : "Editar Producto";
-            this.Size = new Size(400, 350);
+            this.Size = new Size(400, 380);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
+            this.BackColor = Color.White;
 
             InicializarComponentes();
             if (_producto != null) CargarDatos();
@@ -30,25 +31,34 @@ namespace SuperMarketClient
 
         private void InicializarComponentes()
         {
-            Label lblNombre = new Label { Text = "Nombre:", Location = new Point(30, 30), AutoSize = true };
-            txtNombre = new TextBox { Location = new Point(120, 27), Width = 200 };
+            int y = 30;
+            CrearCampo("Nombre:", ref txtNombre, ref y);
+            CrearCampo("Categoría:", ref txtCategoria, ref y);
+            CrearCampoNum("Precio (€/kg):", ref numPrecio, ref y);
+            CrearCampoNum("Stock Inicial:", ref numStock, ref y);
 
-            Label lblCategoria = new Label { Text = "Categoría:", Location = new Point(30, 70), AutoSize = true };
-            txtCategoria = new TextBox { Location = new Point(120, 67), Width = 200 };
-
-            Label lblPrecio = new Label { Text = "Precio:", Location = new Point(30, 110), AutoSize = true };
-            numPrecio = new NumericUpDown { Location = new Point(120, 107), Width = 100, DecimalPlaces = 2, Maximum = 1000 };
-
-            Label lblStock = new Label { Text = "Stock:", Location = new Point(30, 150), AutoSize = true };
-            numStock = new NumericUpDown { Location = new Point(120, 147), Width = 100, DecimalPlaces = 2, Maximum = 10000 };
-
-            btnGuardar = new Button { Text = "Guardar", Location = new Point(120, 220), Width = 90, BackColor = Color.LightGreen };
+            btnGuardar = UI.CrearBoton("GUARDAR", 120, y + 20, UI.PrimaryColor);
+            btnGuardar.Width = 140; 
+            btnGuardar.Height = 45;
             btnGuardar.Click += BtnGuardar_Click;
 
-            btnCancelar = new Button { Text = "Cancelar", Location = new Point(230, 220), Width = 90, BackColor = Color.LightGray };
-            btnCancelar.Click += (s, e) => this.Close();
+            this.Controls.Add(btnGuardar);
+        }
 
-            this.Controls.AddRange(new Control[] { lblNombre, txtNombre, lblCategoria, txtCategoria, lblPrecio, numPrecio, lblStock, numStock, btnGuardar, btnCancelar });
+        private void CrearCampo(string label, ref TextBox txt, ref int y)
+        {
+            this.Controls.Add(new Label { Text = label, Location = new Point(40, y), AutoSize = true, Font = UI.MainFont, ForeColor = Color.Gray });
+            txt = new TextBox { Location = new Point(40, y + 25), Width = 300, Font = UI.MainFont, BorderStyle = BorderStyle.FixedSingle };
+            this.Controls.Add(txt);
+            y += 70;
+        }
+
+        private void CrearCampoNum(string label, ref NumericUpDown num, ref int y)
+        {
+            this.Controls.Add(new Label { Text = label, Location = new Point(40, y), AutoSize = true, Font = UI.MainFont, ForeColor = Color.Gray });
+            num = new NumericUpDown { Location = new Point(40, y + 25), Width = 150, Font = UI.MainFont, DecimalPlaces = 2, Maximum = 10000 };
+            this.Controls.Add(num);
+            y += 70;
         }
 
         private void CargarDatos()
@@ -61,15 +71,10 @@ namespace SuperMarketClient
 
         private async void BtnGuardar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtCategoria.Text))
-            {
-                MessageBox.Show("Todos los campos son obligatorios.");
-                return;
-            }
-
+            if (string.IsNullOrWhiteSpace(txtNombre.Text)) return;
             btnGuardar.Enabled = false;
 
-            var nuevoProducto = new Producto
+            var nuevo = new Producto
             {
                 id = _producto?.id ?? 0,
                 NOMBRE = txtNombre.Text,
@@ -80,24 +85,12 @@ namespace SuperMarketClient
 
             try
             {
-                if (_producto == null)
-                {
-                    await _apiClient.CrearProductoAsync(nuevoProducto);
-                }
-                else
-                {
-                    await _apiClient.ActualizarProductoAsync(nuevoProducto.id, nuevoProducto);
-                }
+                if (_producto == null) await _apiClient.CrearProductoAsync(nuevo);
+                else await _apiClient.ActualizarProductoAsync(nuevo.id, nuevo);
                 this.Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al guardar: " + ex.Message);
-            }
-            finally
-            {
-                btnGuardar.Enabled = true;
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
+            finally { btnGuardar.Enabled = true; }
         }
     }
 }

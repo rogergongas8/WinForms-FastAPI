@@ -8,6 +8,7 @@ namespace SuperMarketClient
     public partial class Form1 : Form
     {
         private readonly ApiClient _apiClient = new ApiClient();
+        private Label lblTitulo;
 
         public Form1()
         {
@@ -19,58 +20,61 @@ namespace SuperMarketClient
         private void ConfigurarVentana()
         {
             this.Text = "Frutería El Mercado - Gestión";
-            this.Size = new Size(800, 600);
+            this.Size = new Size(900, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
-            
+            this.BackColor = UI.PrimaryColor; // Fondo base si no hay imagen
+
+            // Intento de cargar imagen segura
             string rutaImagen = "fondo.jpg"; 
             if (File.Exists(rutaImagen))
             {
-                this.BackgroundImage = Image.FromFile(rutaImagen);
-                this.BackgroundImageLayout = ImageLayout.Stretch;
-            }
-            else
-            {
-                this.BackColor = UI.PrimaryColor; 
+                using (var fs = new FileStream(rutaImagen, FileMode.Open, FileAccess.Read))
+                {
+                    this.BackgroundImage = Image.FromStream(fs);
+                    this.BackgroundImageLayout = ImageLayout.Stretch;
+                }
             }
         }
         
-        // Titulo
-        Label lblTitulo = new Label
-        {
-            Text = "MENÚ PRINCIPAL",
-            Font = new Font("Segoe UI", 14, FontStyle.Bold),
-            ForeColor = UI.PrimaryColor,
-            AutoSize = false,
-            TextAlign = ContentAlignment.MiddleCenter,
-            Dock = DockStyle.Top,
-            Height = 50
-        };
-
         private void CrearPanelCentral()
         {
+            // Panel blanco flotante con sombra simulada (Padding)
             Panel panelMenu = new Panel
             {
-                Size = new Size(350, 380),
+                Size = new Size(380, 420),
                 BackColor = Color.White,
-                Padding = new Padding(20)
+                Padding = new Padding(30)
             };
-    
+            
             panelMenu.Location = new Point(
                 (this.ClientSize.Width - panelMenu.Width) / 2,
                 (this.ClientSize.Height - panelMenu.Height) / 2
             );
-            panelMenu.Anchor = AnchorStyles.None; 
+            panelMenu.Anchor = AnchorStyles.None;
 
-            panelMenu.Controls.Add(lblTitulo); 
-            lblTitulo.BringToFront();
-            
-            // 1. PRIMERO AÑADES LOS BOTONES (para que queden abajo)
+            // Título
+            lblTitulo = new Label
+            {
+                Text = "MENÚ PRINCIPAL",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = UI.PrimaryColor,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Top,
+                Height = 70
+            };
+
+            // 1. Añadimos botones (visualmente irán abajo)
             AgregarBotonMenu(panelMenu, "Ver Informes", Color.Purple, () => new FormInformes(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Control de Stock", Color.Orange, () => new FormStock(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Nueva Venta", UI.AccentColor, () => new FormVentas(_apiClient).ShowDialog());
             AgregarBotonMenu(panelMenu, "Gestionar Productos", UI.PrimaryColor, () => new FormProductos(_apiClient).ShowDialog());
+
+            // 2. Añadimos título
+            panelMenu.Controls.Add(lblTitulo);
             
- 
+            // 3. ¡LA CLAVE! Enviar al fondo para que suba arriba en Dock=Top
+            lblTitulo.SendToBack(); 
 
             this.Controls.Add(panelMenu);
         }
@@ -83,13 +87,14 @@ namespace SuperMarketClient
                 BackColor = color,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Height = 45,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Height = 50,
                 Dock = DockStyle.Top,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                FlatAppearance = { BorderSize = 0 }
             };
             
-            Panel espaciador = new Panel { Height = 10, Dock = DockStyle.Top };
+            Panel espaciador = new Panel { Height = 15, Dock = DockStyle.Top, BackColor = Color.Transparent };
             
             btn.Click += (s, e) => accion();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace SuperMarketClient
 {
@@ -19,43 +20,39 @@ namespace SuperMarketClient
             _apiClient = apiClient;
             
             this.Text = "Gestión de Productos";
-            this.Size = new Size(900, 600);
+            this.Size = new Size(1000, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
             
             InicializarUI();
             CargarDatos();
         }
 
-private void InicializarUI()
+        private void InicializarUI()
         {
-            // 1. Configurar Fondo y Fuente
             this.BackColor = UI.BackColor;
-            this.Font = UI.MainFont;
 
-            // 2. Panel Superior
+            // Panel Superior Limpio
             Panel panelTop = new Panel { Dock = DockStyle.Top, Height = 80, BackColor = Color.White, Padding = new Padding(20) };
             
-            Label lblBuscar = new Label { Text = "🔍 Buscar:", Location = new Point(20, 30), AutoSize = true, ForeColor = Color.Gray };
-            txtBuscar = new TextBox { Location = new Point(90, 28), Width = 200, Font = UI.MainFont };
+            Label lblBuscar = new Label { Text = "🔍 Buscar:", Location = new Point(20, 32), AutoSize = true, ForeColor = Color.Gray, Font = UI.MainFont };
+            txtBuscar = new TextBox { Location = new Point(100, 30), Width = 200, Font = UI.MainFont, BorderStyle = BorderStyle.FixedSingle };
             txtBuscar.TextChanged += (s, e) => FiltrarLista();
 
-            // Usamos el helper de UI para crear botones bonitos
-            btnRefrescar = UI.CrearBoton("↻ Refrescar", 310, 25, Color.Gray);
+            btnRefrescar = UI.CrearBoton("↻ Refrescar", 320, 27, Color.Gray);
             btnRefrescar.Click += (s, e) => CargarDatos();
 
-            // Botones CRUD con colores semánticos y emojis
-            var btnNuevo = UI.CrearBoton("➕ Nuevo", 520, 25, UI.AccentColor); // Azul
+            var btnNuevo = UI.CrearBoton("➕ Nuevo", 550, 27, UI.AccentColor);
             btnNuevo.Click += BtnNuevo_Click;
 
-            var btnEditar = UI.CrearBoton("✏️ Editar", 630, 25, Color.Orange); 
+            var btnEditar = UI.CrearBoton("✏️ Editar", 670, 27, Color.Orange); 
             btnEditar.Click += BtnEditar_Click;
 
-            var btnEliminar = UI.CrearBoton("🗑️ Borrar", 740, 25, Color.IndianRed); 
+            var btnEliminar = UI.CrearBoton("🗑️ Borrar", 790, 27, Color.IndianRed); 
             btnEliminar.Click += BtnEliminar_Click;
 
             panelTop.Controls.AddRange(new Control[] { lblBuscar, txtBuscar, btnRefrescar, btnNuevo, btnEditar, btnEliminar });
 
-            // 3. Tabla (Usamos el estilizador)
+            // Tabla Estilizada
             dgvProductos = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -67,20 +64,13 @@ private void InicializarUI()
                 RowHeadersVisible = false
             };
             
-            UI.EstilarGrid(dgvProductos); // <--- MAGIA AQUÍ
+            UI.EstilarGrid(dgvProductos); 
 
             this.Controls.Add(dgvProductos);
             this.Controls.Add(panelTop);
-            panelTop.SendToBack();
+            panelTop.SendToBack(); // El panel top va "detrás" del grid en Z-Order para pintarse arriba correctamente si hay Dock Fill
         }
         
-        private Button CrearBoton(string texto, int x, Color color, EventHandler evento)
-        {
-            var btn = new Button { Text = texto, Location = new Point(x, 25), Size = new Size(80, 30), BackColor = color, FlatStyle = FlatStyle.Flat };
-            btn.Click += evento;
-            return btn;
-        }
-
         private async void CargarDatos()
         {
             try
@@ -97,22 +87,14 @@ private void InicializarUI()
             dgvProductos.DataSource = _listaProductos
                 .Where(p => p.NOMBRE.ToLower().Contains(busqueda) || p.CATEGORIA.ToLower().Contains(busqueda))
                 .ToList();
-
-            EstilarGrid(); 
-        }
-
-        private void EstilarGrid()
-        {
-            if (dgvProductos.Columns["id"] != null) dgvProductos.Columns["id"].Width = 40;
-            if (dgvProductos.Columns["STOCK"] != null) dgvProductos.Columns["STOCK"].HeaderText = "Stock";
+            
+            // Ocultar columnas feas
+            if (dgvProductos.Columns["id"] != null) dgvProductos.Columns["id"].Visible = false;
+            
             if (dgvProductos.Columns["PRECIOKG"] != null) 
-            {
-                dgvProductos.Columns["PRECIOKG"].HeaderText = "Precio";
                 dgvProductos.Columns["PRECIOKG"].DefaultCellStyle.Format = "C2";
-            }
         }
 
-        // --- Eventos Click ---
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
             new FormDetalleProducto(_apiClient).ShowDialog();

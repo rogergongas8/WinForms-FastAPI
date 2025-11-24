@@ -5,15 +5,12 @@ namespace SuperMarketClient
 {
     public static class UI
     {
+        // Colores más vivos y modernos
+        public static Color PrimaryColor = Color.FromArgb(46, 125, 50);   // Verde Bosque
+        public static Color AccentColor = Color.FromArgb(239, 108, 0);    // Naranja Intenso
+        public static Color BackColor = Color.FromArgb(245, 245, 245);    // Gris muy suave (Casi blanco)
+        public static Color TextColor = Color.FromArgb(33, 33, 33);       // Gris oscuro (mejor que negro puro)
         
-        public static Color PrimaryColor = Color.FromArgb(56, 142, 60); 
-        
-        public static Color AccentColor = Color.FromArgb(255, 112, 67);
-        
-        public static Color BackColor = Color.FromArgb(250, 248, 245);
-        
-        public static Color TextColor = Color.FromArgb(60, 60, 60);
-
         public static Font MainFont = new Font("Segoe UI", 10F, FontStyle.Regular);
         public static Font HeaderFont = new Font("Segoe UI", 11F, FontStyle.Bold);
 
@@ -29,27 +26,36 @@ namespace SuperMarketClient
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 Cursor = Cursors.Hand,
-                FlatAppearance = { BorderSize = 0 } 
+                FlatAppearance = { BorderSize = 0 } // Sin bordes negros
             };
         }
 
         public static void EstilarGrid(DataGridView dgv)
         {
+            // Fondo limpio
             dgv.BackgroundColor = Color.White;
             dgv.BorderStyle = BorderStyle.None;
+            
+            // Quitar lineas negras
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(200, 230, 201);
+            dgv.GridColor = Color.FromArgb(230, 230, 230); // Gris muy clarito para las líneas
+            
+            // Selección suave
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(220, 237, 200); // Verde muy suave
             dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
+            
+            // Fuente y espaciado
             dgv.DefaultCellStyle.Font = MainFont;
             dgv.DefaultCellStyle.ForeColor = TextColor;
-            dgv.RowTemplate.Height = 40;
+            dgv.RowTemplate.Height = 45; // Filas más altas (más aire)
             
+            // Cabecera
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = HeaderFont;
-            dgv.ColumnHeadersHeight = 45;
+            dgv.ColumnHeadersHeight = 50;
         }
     }
 }
