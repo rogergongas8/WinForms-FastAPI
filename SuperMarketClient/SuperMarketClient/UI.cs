@@ -6,10 +6,10 @@ namespace SuperMarketClient
     public static class UI
     {
         // Colores más vivos y modernos
-        public static Color PrimaryColor = Color.FromArgb(46, 125, 50);   // Verde Bosque
-        public static Color AccentColor = Color.FromArgb(239, 108, 0);    // Naranja Intenso
-        public static Color BackColor = Color.FromArgb(245, 245, 245);    // Gris muy suave (Casi blanco)
-        public static Color TextColor = Color.FromArgb(33, 33, 33);       // Gris oscuro (mejor que negro puro)
+        public static Color PrimaryColor = Color.FromArgb(46, 125, 50);   
+        public static Color AccentColor = Color.FromArgb(239, 108, 0);    
+        public static Color BackColor = Color.FromArgb(245, 245, 245);    
+        public static Color TextColor = Color.FromArgb(33, 33, 33);   
         
         public static Font MainFont = new Font("Segoe UI", 10F, FontStyle.Regular);
         public static Font HeaderFont = new Font("Segoe UI", 11F, FontStyle.Bold);
@@ -26,7 +26,7 @@ namespace SuperMarketClient
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 Cursor = Cursors.Hand,
-                FlatAppearance = { BorderSize = 0 } // Sin bordes negros
+                FlatAppearance = { BorderSize = 0 } 
             };
         }
 
